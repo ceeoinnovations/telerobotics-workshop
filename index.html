@@ -1,0 +1,571 @@
+ <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Telerobotics Workshop</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+
+  <!-- OTHER SCRIPTS TO RUN THIS  -->
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <script src="./directControl.js"></script>
+  <script src="./airtableControl.jsjs"></script>
+  <script src="./telerobotics.js"></script>
+  <script src="./airtableBrowser.js"></script>
+  <script src="./extraFunctions.js"></script>
+
+  <!--TuftsCEEO ServiceDock-->
+  <script src="https://cdn.jsdelivr.net/gh/tuftsceeo/SPIKE-Web-Interface@1.0/cdn/ServiceDock.min.js"></script>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+  <!-- SPIKE Prime Service Doc -->
+  <div style="position: absolute; top: 50px; right: 22px;" align=center>
+    <small>
+      ServiceDock<br />
+      <i>Connect to your SPIKE here</i>
+      
+    </small>
+    <service-spike id="service_SPIKE"></service-spike>
+  </div>
+
+  <!-- Tabs -->
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist" >
+      <!-- Welcome -->
+      <button class="nav-link active" id="nav-welcome-tab" data-bs-toggle="tab" data-bs-target="#nav-welcome"
+        type="button" role="tab" aria-controls="nav-welcome" aria-selected="true"
+        onclick="stopListener()">Welcome</button>
+      <!-- Build -->
+      <button class="nav-link" id="nav-build-tab" data-bs-toggle="tab" data-bs-target="#nav-build" type="button"
+        role="tab" aria-controls="nav-build" aria-selected="false" onclick="stopListener()">Build Your Robot</button>
+      <!-- Direct Control -->
+      <button class="nav-link" id="nav-direct-tab" data-bs-toggle="tab" data-bs-target="#nav-direct" type="button"
+        role="tab" aria-controls="nav-direct" aria-selected="false" onclick="stopListener()">Direct Control</button>
+      <!-- Airtable Control -->
+      <button class="nav-link" id="nav-airtable-tab" data-bs-toggle="tab" data-bs-target="#nav-airtable" type="button"
+        role="tab" aria-controls="nav-airtable" aria-selected="false" onclick="stopListener()">Airtable Control</button>
+      <!-- Telerobotic Control -->
+      <button class="nav-link" id="nav-telerobotic-tab" data-bs-toggle="tab" data-bs-target="#nav-telerobotic"
+        type="button" role="tab" aria-controls="nav-telerobotic" aria-selected="false"
+        onclick="startListener()">Telerobotic Control</button>
+      <!-- Troubleshooting -->
+      <button class="nav-link" id="nav-troubleshooting-tab" data-bs-toggle="tab" data-bs-target="#nav-troubleshooting"
+        type="button" role="tab" aria-controls="nav-troubleshooting" aria-selected="false"
+        onclick="stopListener()">Help</button>
+    </div>
+  </nav>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="nav-tabContent">
+
+    <!-- Welcome Tab Content -->
+    <div class="tab-pane fade show active" id="nav-welcome" role="tabpanel" aria-labelledby="nav-welcome-tab">
+      <br><br><br> 
+      <h1> &ensp; Welcome to Our Telerobotics Workshop! </h1> <br>
+      <!-- Workshop Facilitators -->
+      <h4> &ensp; &ensp; WORKSHOP FACILITATORS </h4>
+      &ensp; &ensp; &ensp; &ensp; <img src="./img/crogers.png" height=93 width=75> &ensp; <a
+        href="https://crogers.pages.tufts.edu/" target=_blank><b>Dr. Chris Rogers</b></a> is a Mechanical Engineering professor at Tufts University and a founding member of the Tufts Center for Engineering Education and Outreach (<a href="https://ceeo.tufts.edu/" target=_blank>CEEO</a>). <br>  
+      &ensp; &ensp; &ensp; &ensp; <img src="./img/Julia_Zelevinsky.jpg" height=86 width=75> &ensp; <a
+        href="https://www.linkedin.com/in/juliazel/" target=_blank><b>Julia Zelevinsky</b></a> is a rising sophomore at
+      Tufts University studying Mechanical Engineering and Computer  
+      Science. <br>
+      &ensp; &ensp; &ensp; &ensp; <img src="./img/anna_quiros.jpg" height=93 width=75> &ensp;&nbsp;<a
+        href="https://aquiros28249.wixsite.com/my-site-1" target=_blank><b>Anna Quiros</b></a> is a rising junior at
+      Tufts University studying Mechanical Engineering and Music Engineering.
+      <br> <br>
+      <hr> <br>
+
+     <!-- Workshop Overview --> 
+      <h3 align="center"> A QUICK OVERVIEW OF THE WORKSHOP</h3>
+      <h4> &ensp; &ensp; What is the goal? </h4>
+      <p style="margin-left:50px; margin-right:50px "> In this workshop, we want to demonstrate the process of <b> 
+        building, coding, and connecting telerobots </b> (remotely controlled robots) <b> over long distances.</b> 
+        To do so, you will send commands to Airtable (described in the next section), and these commands will be 
+        read by a receiving source that then runs the corresponding action to the command. </p>
+      <p align="center"><b><mark> To do so, follow the tabs at the top of the page in order!
+          </mark></b></p> <br>
+
+      <h4> &ensp; &ensp; How will we communicate with the robots? </h4>
+      <p style="margin-left:50px; margin-right:50px">
+        <a href="https://airtable.com/" target=_blank>Airtable</a> lets you create a <a
+          href="https://support.airtable.com/hc/en-us/articles/202576419" target="_blank">base</a> which holds all of
+        your <a href="https://support.airtable.com/hc/en-us/articles/6118564934423-What-is-a-table-"
+          target="_blank">tables</a>.
+        Tables are like spreadsheets that you can update from anywhere, and they can hold all sorts
+        of values, like numbers, strings, and dates! Inside a table, there are <a
+          href="https://support.airtable.com/hc/en-us/articles/202624179-The-primary-field" target="_blank">fields.</a>
+        Each field has
+        a <a href="https://support.airtable.com/hc/en-us/articles/360055885353-Field-types-overview"
+          target="_blank">datatype</a>
+        assigned to it, so numbers can only go in number fields, and so on. The rows that hold the data are called <a
+          href="https://support.airtable.com/hc/en-us/articles/227490508-Airtable-for-mobile-Records-
+          overview#:~:text=A%20record%20is%20the%20base,appears%20as%20a%20tappable%20card."
+          target="_blank">records.</a>
+        In this workshop, we will use Airtable to allow our computers and robots to communicate over long distances.
+        We will post commands to an Airtable that a receiving robot subscribes to, and when the robot recognizes a
+        command, it will then run the corresponding code. <br> <br>
+
+        <i> Based on documentation originally written by Dr. Ethan Danahy <br>
+          <a href="http://dreslab.com/" target=_blank>Dr. E's Lab</a></i>
+      </p>
+
+      <p align=center>
+        <img src='./img/AirTableDiagram.jpg' height=300 width=450 /> <br>
+<!--         <iframe width="560" height="315" src="https://www.youtube.com/embed/pRUB4nnUp9o" title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe> -->
+      </p> <br>
+
+      <h4> &ensp;&ensp; How is this used in the real world? </h4>
+
+      <!-- Cancer Patients -->
+      <p style="margin-left:50px; margin-right:50px">
+        <a href="https://www.mdanderson.org/cancerwise/pediatric-cancer-patients-connect-through-a-robot.h00-159143667.html"
+          target=_blank>
+          Pediatric cancer patients connect through a robot</a> <br>
+        <i> Young cancer patients use telerobots to attend school and their friends.</i>
+        <br> <br>
+      </p>
+
+      <!-- video 1 -->
+      <p style="margin-left:50px; margin-right:50px">
+        The Future of Remote Work is in Telerobotics &ensp;&ensp;&ensp;&ensp;&ensp; 
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        Tactile Telerobot 
+        <br>
+      </p>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/V-iJqbuJKUg"
+          title="YouTube video player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen style="margin-left:50px;"></iframe>
+
+      <!-- video 2 -->
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/R-sP_pju81E"
+          title="YouTube video player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen style="margin-left:50px;"></iframe> <br><br> 
+
+      <!-- video 3 -->
+      <p style="margin-left:50px; margin-right:50px">
+        Robocath_First telerobotic procedure in Europe <br>
+      </p>
+      <blockquote><iframe width="560" height="315" src="https://www.youtube.com/embed/2k8WR7eE81c"
+          title="YouTube video player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen style="margin-left:50px;"></iframe></blockquote>
+      
+      <br> 
+      <p align="center"> 
+      <button class="change_tab_button" onclick="activateTab('#nav-build-tab')">Next Page</button>
+      </p>
+      <hr>
+      <br>
+      
+      <!---------------------------- CREDITS ----------------------------->
+      <h4 align=center> &ensp;&ensp; SPECIAL THANKS TO...</h4>
+      <p align=center> Ethan Danahy, James Dwyer, Rachel Hsin, Sebastian Fernandez, and Gabriel Sessions
+      </p> <br><br>
+
+      <h4 align=center> WORKSHOP DESIGNED AND DEVELOPED BY: </h4> <br>
+      <p align=center><a href='https://ceeo.tufts.edu' target=_blank><img src='./img/ceeo.png' height='100px'
+            border=0 /></a></p>
+      <p align=center><a href='https://www.teaching.com.au/' target=_blank><img src='./img/mta.png' height='100px'
+            border=0 /></a></p>
+      <p align=center><small>Content is Copyright 2022 by Chris Rogers</small></p>
+      <p align=center><small>LEGO®, the LEGO® logo, the Brick, SPIKE™, and the Minifigure are trademarks of ©The LEGO®
+          Group.<br />All other trademarks and copyrights are the property of their respective owners. All rights
+          reserved.<br />This workshop and content isn’t affiliated, authorized, or endorsed by The LEGO Group.</small>
+        <br> <br>
+      </p>
+    </div>
+
+    <!-- Build Your Robot Tab Content -->
+    <div class="tab-pane fade" id="nav-build" role="tabpanel" aria-labelledby="nav-build-tab">
+      <br><br><br> 
+      <h4> &ensp;&ensp; Build a robot that can move around holding a device (phone, tablet, computer, etc.) <br> <br>
+      </h4>
+
+      <p style="margin-left:50px; margin-right:50px">
+        <b> When you’re building, think about… </b>
+      <ul style="margin-left:50px; margin-right:50px">
+        <li> How can you make your telerobot sturdy? </li>
+        <li> Does the robot move the device around to allow for different camera angles? </li>
+        <li> What is the best way to secure the device on the robot? </li>
+        <li> What other action (other than moving forward, backward, etc.) can you add to your telerobot to enhance its
+          features?</li>
+      </ul>
+      </p>
+      <p style="margin-left:50px; margin-right:50px">
+        <br> <b> ROBOT BUILD EXAMPLES </b> <br>
+        <i> The tall telerobots were built by Rachel Hsin, and the GIF robot was built by Julia Zelevinsky and Sebastian
+          Fernandez. </i>
+        <br> <br>
+      </p>
+
+      <img src="img/IMG_5043.JPG" height="500" width="120" style="margin-left:50px; margin-right:50px" />
+      <img src="img/IMG_5044.JPG" height="500" width="120" />
+      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+      <img src="img/telerobot_gif.gif" height="439" width="600" />
+
+      <br> <br> 
+      <p align="center"> 
+      <button class="change_tab_button" onclick="activateTab('#nav-welcome-tab')">Previous Page</button> &ensp;
+      <button class="change_tab_button" onclick="activateTab('#nav-direct-tab')">Next Page</button>
+      </p>
+      <br> <br>
+    </div>
+
+    <!-- Direct Control Tab Content -->
+    <div class="tab-pane fade" id="nav-direct" role="tabpanel" aria-labelledby="nav-direct-tab">
+      <br><br><br>
+      <p align="center" style="font-size: 18pt"> Code your robot and move it using the arrow keys! </p>
+      <p style="margin-left:310px; margin-right:240px">
+        1. Visit the <a href="https://spike.legoeducation.com/" target="_blank">LEGO SPIKE App</a> (or another IDE) 
+        to write and download 4 movement and 1 "extra action" program to your hub. <br>
+          &ensp;&ensp;&ensp;&ensp;&ensp; <b>Make sure you download the code to the right slots! (see below)</b> <button class="infobutton" onclick="activateTab('#nav-troubleshooting-tab')"><u>Need some coding tips? </u> </button><br>
+          2. Connect to ServiceDock (click on the icon to the right, select your robot, and wait for the circle to turn
+          green). <br>
+          &ensp;&ensp;&ensp;&ensp;&ensp; <button class="infobutton" onclick="activateTab('#nav-troubleshooting-tab')"> 
+            <u>ServiceDock Help</u> </button> <br>
+          3. Move your robot using the arrow keys below.
+      </p>
+
+      <!-- BUTTONS -->
+      <div>
+        <p style="text-align:center;">
+          <!-- forward -->
+          SLOT 0 <br>
+          <button class="btn btn1" onclick="forward()"><img src="img/up_arrow.png" height="70"
+              width="70" /></button><br>
+
+          <!-- left -->
+          SLOT 3
+          <button class="btn btn1" onclick="left()"><img src="img/left_arrow.png" height="70" width="70" /></button>
+          </button>
+          <img src="img/bot.png" height="70" width="70" />
+
+          <!-- right -->
+          <button class="btn btn1" onclick="right()"><img src="img/right_arrow.png" height="70" width="70" /></button>
+          SLOT 1 <br>
+
+          <!-- back -->
+          <button class="btn btn1" onclick="backward()"><img src="img/down_arrow.png" height="70"
+              width="70" /></button><br>
+          SLOT 2
+          <br><br>
+
+          <!-- extra action -->
+          <button class="btn btn1" onclick="action()"><img src="img/action.png" height="70" width="100" /></button> <br>
+          SLOT 4 <br><br>        
+      </div>
+      
+      </p>
+        <p align=center> <mark> <b> CHECKPOINT: </b> Can you drive your robot around your room? </mark>
+      </p>
+      <br> 
+    
+      <p align="center"> 
+        <button class="change_tab_button" onclick="activateTab('#nav-build-tab')">Previous Page</button> &ensp;
+        <button class="change_tab_button" onclick="activateTab('#nav-airtable-tab')">Next Page</button>
+      </p>
+      <br>
+      
+    </div>
+
+    <!-- Airtable Control Tab Content -->
+    <div class="tab-pane fade" id="nav-airtable" role="tabpanel" aria-labelledby="nav-airtable-tab"> <br>
+      <br><br>
+      <p align="center" style="font-size: 18pt"> Create an Airtable, fill in the blanks below, and update the table using the buttons! </p>
+      <p align="center"> Use <a href="./img/Airtable_Step_by_Step.pdf" target="_blank">this guide</a> 
+        to set up your own Airtable. </p>
+      
+      <div class="container">
+        <img src="img/cloud.png" style="width:400px;">
+        <div class="centered">
+          <label for="api_key">API Key:</label>
+          <input type="text" id="api_key" name="api_key"> <br>
+          <label for="base_id">Base ID:</label>
+          <input type="text" id="base_id" name="base_id"> <br>
+          <label for="table_name">Table Name:</label>
+          <input type="text" id="table_name" name="table_name"> <br>
+        </div>
+      </div>
+
+      <p style="text-align:center;">
+        <!-- forward -->
+        <button class="btn btn1" onclick="update_airtable('forward')"><img src="img/up_arrow.png" height="70"
+            width="70" /></button>
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<br>
+
+        <!-- left -->
+        &ensp;&ensp;&ensp;
+        <button class="btn btn1" onclick="update_airtable('left')""><img src=" img/left_arrow.png" height="70"
+          width="70" /></button></button>
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+
+        <!-- right -->
+        <button class="btn btn1" onclick="update_airtable('right')"><img src="img/right_arrow.png" height="70"
+            width="70" /></button>
+
+        <!-- extra action -->
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        <button class="btn btn1" onclick="update_airtable('action')"><img src="img/action.png" height="70"
+            width="100" /></button>
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+
+        <!-- rec id -->
+        <label for="rec_id">Record ID: </label>
+        <input type="text" id="rec_id" name="rec_id">
+        <br>
+
+        <!-- back -->
+        <button class="btn btn1" onclick="update_airtable('backward')"><img src="img/down_arrow.png" height="70"
+            width="70" /></button>
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+      </p>
+      <br>
+      <p align=center> <mark> <b> CHECKPOINT: </b> Can you see the "forward" command in your Airtable after clicking the
+          forward button?
+        </mark> </p> <br>
+      <p align="center"> 
+        <button class="change_tab_button" onclick="activateTab('#nav-direct-tab')">Previous Page</button> &ensp;
+        <button class="change_tab_button" onclick="activateTab('#nav-telerobotic-tab')">Next Page</button>
+      </p>
+      <br> 
+    </div>
+
+    <!-- Telerobotic Control Tab Content -->
+    <div class="tab-pane fade" id="nav-telerobotic" role="tabpanel" aria-labelledby="nav-telerobotic-tab">
+      <br><br><br>
+      <p align="center" style="font-size: 18pt"> Use your Airtable to control your robot! </p>
+       <p align="center"> Make sure your robot is still connected to ServiceDock :) </p>
+      
+      <!-- Input AirTable Information -->
+      <div class="container">
+        <img src="img/cloud2.png" style="width:440px;">
+        <div class="center-left">
+          <label for="api_key_2">API Key:</label>
+          <input type="text" id="api_key_2" name="api_key_2"> <br>
+          <label for="base_id_2">Base ID:</label>
+          <input type="text" id="base_id_2" name="base__2id"> <br>
+          <label for="table_name_2">Table Name: </label>
+          <input type="text" id="table_name_2" name="table_name_2"> <br>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <br>
+      <p style="text-align:center;">
+        <!-- forward -->
+        <button class="btn btn1" onclick="send_airtable('forward')"><img src="img/up_arrow.png" height="70"
+            width="70" /></button>
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        <br>
+
+        <!-- left -->
+        &ensp;&ensp;&ensp;
+        <button class="btn btn1" onclick="send_airtable('left')""><img src=" img/left_arrow.png" height="70"
+          width="70" /></button></button>
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+
+        <!-- right -->
+        <button class="btn btn1" onclick="send_airtable('right')"><img src="img/right_arrow.png" height="70"
+            width="70" /></button>
+
+        <!-- extra action -->
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        <button class="btn btn1" onclick="send_airtable('action')"><img src="img/action.png" height="70"
+            width="100" /></button>
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+
+        <!-- rec id -->
+        <label for="rec_id_2">Record ID: </label>
+        <input type="text" id="rec_id_2" name="rec_id_2">
+        <br>
+
+        <!-- back -->
+        <button class="btn btn1" onclick="send_airtable('backward')"><img src="img/down_arrow.png" height="70"
+            width="70" /></button>
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+      </p>
+      
+      <br>
+      <p align=center> <mark> <b> CHECKPOINT: </b> Can you see changes being made in your AirTable as you drive your
+          robot around your room? </mark> </p>
+      <br>
+      <p align="center"> 
+        <button class="change_tab_button" onclick="activateTab('#nav-airtable-tab')">Previous Page</button> &ensp;
+        <button class="change_tab_button" onclick="activateTab('#nav-troubleshooting-tab')">Next Page</button>
+      </p>
+      <br> 
+    </div>
+
+    <!-- Troubleshooting Tab Content -->
+    <div class="tab-pane fade" id="nav-troubleshooting" role="tabpanel" aria-labelledby="nav-troubleshooting-tab">
+      <br><br><br>
+
+      <h3> &ensp;&ensp; CODE TIPS </h3>
+      <p style="margin-left:50px; margin-right:50px">
+        <i> What code should go where? </i> &ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        <i> Code Example: </i>Moving Forward Using MotorPair <br> 
+        <img src="img/Screen Shot 2022-07-27 at 9.23.01 AM.png" height="160" width="460" style="border:5px solid #000000; padding:3px;"/>        
+        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+        <img src="img/forwardexample.png" height="190" width="320" />
+        <img src="img/forwardPython.png" height="140" width="490"/>
+        <br> <br>
+        This code was made using the <a href=" https://spike.legoeducation.com/" target="_blank">LEGO Education SPIKE Web App</a>.
+      </p> <br>
+
+      <h3> &ensp;&ensp; CONNECTING TO SERVICEDOCK</h3>
+      
+      <span style="margin-left:50px; margin-right:50px"> <b>What is ServiceDock? </b> </span> <br> 
+      <span style="margin-left:50px; margin-right:50px"> &ensp; "ServiceDock is a Javascript framework that allows incorporation of LEGO SPIKE Prime and third party services in interactive web pages." (<a href="https://tuftsceeo.github.io/SPIKE-Web-Interface/index.html">CEEO Innovations</a>) </span><br><br> 
+        <span style="margin-left:50px; margin-right:50px"> <b>USB:</b> </span>
+      <ol style="margin-left:50px; margin-right:50px">
+        <li>Close any external programs that your SPIKE Prime Hub could be connected to (e.g. the SPIKE App)</li>
+        <li>Connect your SPIKE Prime Hub to your laptop's physical port using the cord. </li>
+        <li>Click the ServiceDock icon in the top right of the page. </li>
+        <li>On the top left, you should now see a list of devices/ports to connect to. Select the device 
+          named "LEGO Technic... ". It may be named slightly differently depending on your computer.</li>
+        <li>Click the connect button. </li>
+        <p style="text-align:center;"> <img src="img/USB Connect PC.png" height="270" width="300"/> </p>
+      </ol>
+      
+       <span style="margin-left:50px; margin-right:50px"> <b> BLUETOOTH: </b> </span>
+        <ol style="margin-left:50px; margin-right:50px"> 
+          <li>Close any external programs that your SPIKE Prime Hub could be connected to (e.g. the SPIKE App)</li>
+          <li>Unplug any SPIKE Prime-to-computer USB connections.</li>
+          <li>Go to your computer's Bluetooth settings (e.g. where you can connect Bluetooth headphones, or a speaker) </li>
+          <li>Hit the Bluetooth advertising button on the top right corner of SPIKE hub.</li>
+          <li>Connect to your SPIKE Prime hub. (It should appear once it starts advertising itself.)</li>
+          <li>Return to this website and click on ServiceDock icon on the top right of this page.</li>
+          <li><b>Mac:</b> Click on the LEGOHub option that appears. <br> 
+              <b>Windows:</b> Choose <b>"Serial Port Profile"</b>. If you are unsure which one is correct, disconnect your 
+                SPIKE from your computer in your Bluetooth settings. Compare the list of COM ports you see <i>now</i> 
+                to the ones you see when you <i>are</i> connected to your SPIKE. The new "Serial Port Profile" option 
+                that appears <i>after</i> creating the computer-SPIKE Bluetooth connection is the one you want. 
+                
+            <p style="text-align:center;"> <img src="img/Service_Dock_PC_Demo.gif" height="320" width="600"/> </p>
+          </li>
+        </ol>
+
+      <br>
+      <h3> &ensp;&ensp; SERVICEDOCK ISSUES</h3>
+      <ul style="margin-left:50px; margin-right:50px">
+        <li> Are you connected to ServiceDock? Make sure the dot is green.
+          <ul> 
+            <li> The word "Paired" next to devices in the Serial Port options does not guarrantee that your SPIKE 
+              is connected. You also need a green dot on ServiceDock. </li>
+            <li> Don't worry about multiple devices being "paired". Only the one you click on will create 
+              a connection to ServiceDock. Refreshing the page breaks this connection and unpairs your device 
+              (even if the device still says "paired" in the Serial Port options. ) </li>
+          </ul>
+        </li>
+        <li> Are you connected to the correct device? </li>
+        <li> Change from Bluetooth to a USB cord (use a direct connection). Click on the "LEGO Technic..." option. </li>
+      </ul>
+      
+      <br> 
+      <h3> &ensp;&ensp; ROBOT ISSUES</h3>
+      <ul style="margin-left:50px; margin-right:50px">
+        <li> Is your hub on?</li>
+        <li> Have you loaded in the correct programs to slots 0, 1, 2, 3?
+        <li> Try clicking over to a slot on the SPIKE and running the code in the slot. Does it work? </li>
+        <li> Is your hub connected to ServiceDock or another SPIKE program in another window? If so, close out of that
+          window or disconnect your hub from that program. </li>
+      </ul>
+      <br>
+      
+      <h3> &ensp;&ensp; AIRTABLE ISSUES</h3>
+      <ul style="margin-left:50px; margin-right:50px">
+        <li> Have you inputted the right Airtable information? </li>
+        <li> For more information on how Airtable is set up, check out <a href="./img/Airtable_Step_by_Step.pdf"
+            target="_blank">this link</a>. </li>
+        <li> Make sure that you are using the <b><u>Table Name</u></b> and not the Base Name</li>
+        <p style="text-align:center;"> <img src="img/Airtable_Table_Name.png" height="203" width="533"/> </p>
+      </ul>
+      <br>
+
+      <h3> &ensp;&ensp; OTHER ISSUES</h3>
+      <ul style="margin-left:50px; margin-right:50px">
+        <li> Try reloading the page </li>
+        <li> Restart your hub </li>
+        <li> Other questions? Contact us! Chris Rogers (chris.rogers@tufts.edu), Julia Zelevinsky
+          (julia.zelevinsky@tufts.edu), or Anna Quiros (anna.quiros@tufts.edu)</li>
+      </ul>
+
+      <br>
+      <h3> &ensp;&ensp; HELPFUL RESOURCES</h3>
+      <ul style="margin-left:50px; margin-right:50px">
+        <li><a href="https://airtable.com/" target=_blank>Airtable</a></li>
+        <li><a href="/img/Airtable_Step_by_Step.pdf" target="_blank">Airtable Setup Documentation</a></li>
+        <li><a href='https://education.lego.com/en-us/downloads/spike-app/software' target=_blank>LEGO Education's SPIKE
+            App Software Download</a> </li>
+        <li><a href="https://spike.legoeducation.com/" target=_blank>LEGO Education's SPIKE Web App </a></li>
+        <li> Want to learn more about ServiceDock? Check out <a
+            href="https://tuftsceeo.github.io/SPIKE-Web-Interface/index.html" target="_blank">this link</a> by Dr. Ethan
+          Danahy. </li>
+      </ul>
+      <br>
+      <p align="center"> 
+        <button class="change_tab_button" onclick="activateTab('#nav-telerobotic-tab')">Previous Page</button> &ensp;
+        <button class="change_tab_button" onclick="activateTab('#nav-welcome-tab')">Back to Welcome Page</button>
+      </p>
+      <br> 
+    </div>
+  </div>
+
+
+  <!-- Bootstrap stuff -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous">
+    </script>
+
+  <!-- Set up ServiceDock  -->
+  <script>
+    window.onload = () => {
+      mySPIKE = document.getElementById("service_SPIKE").getService();
+      console.log(mySPIKE)
+
+      mySPIKE.executeAfterInit(async function () {
+        console.log("initialized");
+      });
+
+      if (mySPIKE.init()) {
+        console.log("Successfully initialized the service SPIKE")
+      }
+      else {
+        console.log("Was not able to successfully initialize")
+      }
+    }
+  </script>
+</body>
+
+</html>

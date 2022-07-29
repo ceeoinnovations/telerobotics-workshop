@@ -1,0 +1,94 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: arial;
+  min-width: 1300px;
+}
+
+/* Style buttons */
+.btn {
+  background-color: White;
+  border: none;
+  /* Remove borders */
+  color: white;
+  /* White text */
+  font-size: 16px;
+  /* Set a font size */
+  cursor: pointer;
+  /* Mouse pointer on hover */
+  display: inline-block;
+}
+
+/*darker background on mouse-over */
+.btn1:hover {
+  background-color: lightgreen;
+}
+
+.btn1 {
+  border-radius: 100%;
+}
+
+.container {
+  position: relative;
+  text-align: center;
+  color: black;
+}
+
+.bottom-left {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+}
+
+.top-left {
+  position: absolute;
+  top: 30%;
+  left: 15px;
+}
+
+.top-left-a {
+  position: absolute;
+  top: 15%;
+  left: 0px;
+}
+
+.center-left {
+  position: absolute;
+  top: 35%;
+  left: 47%;
+  transform: translate(-50%, -50%);
+}
+
+.centered {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.change_tab_button {
+  background-color: lavender;
+  border: none;
+  color: black;
+  padding: 10px 22px;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+}
+
+.change_tab_button:hover {
+  background-color: lightpink;
+}
+
+.nav {
+  position: fixed;
+  background-color: lavender;
+  left: 23%;
+}
+
+.infobutton {
+  background-color: white;
+  color: purple;
+  border:none;
+}
