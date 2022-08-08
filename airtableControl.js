@@ -1,4 +1,4 @@
-D// THIS IS THE FUNCTIONALITY FOR UPDATING AIRTABLE 
+// THIS IS THE FUNCTIONALITY FOR UPDATING AIRTABLE 
 
 // How we update the airtable 
 function update_airtable(command) {
